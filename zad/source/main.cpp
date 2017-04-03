@@ -20,87 +20,110 @@ void ruchKomputer(HWND hwndDlg);
 bool wygrana();
 bool wolnepole();
 bool poziomLatwy;
-void ObliczWspolrzedneRuchuKomp();
+bool ObliczWspolrzedneRuchuKomp();
 bool znalazlem=false;
 
-void ObliczWspolrzedneRuchuKomp()
+bool ObliczWspolrzedneRuchuKomp()
 {
-  for (int i = 0; i < 3; i++)
+  if (compisFirstPlayer)
   {
-    for (int j = 0; j < 3; j++)
+    for (int i = 0; i < 3; i++)
     {
-      if (pola[i][j] == 0)
+      for (int j = 0; j < 3; j++)
       {
-        if (compisFirstPlayer == true)
+        if (isFieldOccupiedByFirstPlayer[i][j] == false && isFieldOccupiedBySecondPlayer[i][j] == false)
         {
           pola[i][j] = 1;
           if (wygrana() == true)
           {
-            pola[i][j] = 0;
             wspx = i;
             wspy = j;
-            znalazlem = true;
-          }
-          pola[i][j] = -1;
-            if (wygrana() == true && znalazlem==false)
-          {
             pola[i][j] = 0;
-            wspx = i;
-            wspy = j;
-            znalazlem = true;
+            isGameOnn = true;
+            krzyzykWygral = false;
+            return true;
           }
-            if (znalazlem == false)
-            {
-              b:
-              wspx = rand() % 3;
-              wspy = rand() % 3;
-              if (pola[wspx][wspy] == 0)
-              {
-                return;
-              }
-              else
-                goto b;
-           }
+          pola[i][j] = 0;
         }
-        else
-        {
 
-          pola[i][j] = -1;
-          if (wygrana() == true)
-          {
-            pola[i][j] = 0;
-            wspx = i;
-            wspy = j;
-            znalazlem = true;
-          }
-          pola[i][j] = 1;
-          if (wygrana() == true && znalazlem == false)
-          {
-            pola[i][j] = 0;
-            wspx = i;
-            wspy = j;
-            znalazlem = true;
-          }
-          if (znalazlem == false)
-          {
-
-            c:
-            wspx = rand() % 3;
-            wspy = rand() % 3;
-            if (pola[wspx][wspy] == 0)
-            {
-              return;
-            }
-            else
-              goto c;
-          }
-
-
-        }
       }
     }
+
+    for (int i = 0; i < 3; i++)
+    {
+      for (int j = 0; j < 3; j++)
+      {
+        if (isFieldOccupiedByFirstPlayer[i][j] == false && isFieldOccupiedBySecondPlayer[i][j] == false)
+        {
+          pola[i][j] = -1;
+          if (wygrana() == true)
+          {
+            wspx = i;
+            wspy = j;
+            pola[i][j] = 0;
+            isGameOnn = true;
+            krzyzykWygral = false;
+            return true;
+          }
+          pola[i][j] = 0;
+        }
+
+      }
+    }
+
+  }
+  else
+  {
+    for (int i = 0; i < 3; i++)
+    {
+      for (int j = 0; j < 3; j++)
+      {
+        if (isFieldOccupiedByFirstPlayer[i][j] == false && isFieldOccupiedBySecondPlayer[i][j] == false)
+        {
+          pola[i][j] = -1;
+          if (wygrana() == true)
+          {
+            wspx = i;
+            wspy = j;
+            pola[i][j] = 0;
+            isGameOnn = true;
+            krzyzykWygral = false;
+            return true;
+          }
+          pola[i][j] = 0;
+        }
+
+      }
+    }
+
+    for (int i = 0; i < 3; i++)
+    {
+      for (int j = 0; j < 3; j++)
+      {
+        if (isFieldOccupiedByFirstPlayer[i][j] == false && isFieldOccupiedBySecondPlayer[i][j] == false)
+        {
+          pola[i][j] = 1;
+          if (wygrana() == true)
+          {
+            wspx = i;
+            wspy = j;
+            pola[i][j] = 0;
+            isGameOnn = true;
+            krzyzykWygral = false;
+            return true;
+          }
+          pola[i][j] = 0;
+        }
+
+      }
+    }
+
   }
 
+
+
+
+  return false;
 }
 
 bool wolnepole()
@@ -122,15 +145,46 @@ bool wolnepole()
 void ruchKomputer(HWND hwndDlg)
 {
   HDC hdc = GetDC(hwndDlg);
-   a:
+  bool wspolrzedne;
+  bool znalazlem = false;
+
   if (poziomLatwy == true)
   {
-    wspx = rand() % 3;
-    wspy = rand() % 3;
+    if (wolnepole() == true && wygrana() == false) 
+    {
+      while (!znalazlem)
+      {
+        wspx = rand() % 3;
+        wspy = rand() % 3;
+        if (isFieldOccupiedByFirstPlayer[wspx][wspy] == false && isFieldOccupiedBySecondPlayer[wspx][wspy] == false)
+        {
+          znalazlem = true;
+        }
+
+
+      }
+    }
   }
   else
   {
-    ObliczWspolrzedneRuchuKomp();
+    wspolrzedne=ObliczWspolrzedneRuchuKomp();
+    if (wspolrzedne == false)
+    {
+      if (wolnepole() == true && wygrana() == false)
+      {
+        while (!znalazlem)
+        {
+          wspx = rand() % 3;
+          wspy = rand() % 3;
+          if (isFieldOccupiedByFirstPlayer[wspx][wspy] == false && isFieldOccupiedBySecondPlayer[wspx][wspy] == false)
+          {
+            znalazlem = true;
+          }
+
+
+        }
+      }
+    }
   }
 
   int nowyx = wspx * 100 + 90;
@@ -162,16 +216,7 @@ void ruchKomputer(HWND hwndDlg)
       licznik++;
     }
   }
-  else
-  { 
-    if (poziomLatwy == true)
-    {
-      if (wolnepole() == true && wygrana() == false)
-        goto a;
-    }
 
-
-  }
   ReleaseDC(hwndDlg, hdc);
 }
 
