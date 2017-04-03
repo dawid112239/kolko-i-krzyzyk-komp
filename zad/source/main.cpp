@@ -25,15 +25,17 @@ bool znalazlem=false;
 
 bool ObliczWspolrzedneRuchuKomp()
 {
-  if (compisFirstPlayer)
-  {
+
     for (int i = 0; i < 3; i++)
     {
       for (int j = 0; j < 3; j++)
       {
         if (isFieldOccupiedByFirstPlayer[i][j] == false && isFieldOccupiedBySecondPlayer[i][j] == false)
         {
-          pola[i][j] = 1;
+          if (compisFirstPlayer == true)
+            pola[i][j] = 1;
+          else
+            pola[i][j] = -1;
           if (wygrana() == true)
           {
             wspx = i;
@@ -54,8 +56,11 @@ bool ObliczWspolrzedneRuchuKomp()
       for (int j = 0; j < 3; j++)
       {
         if (isFieldOccupiedByFirstPlayer[i][j] == false && isFieldOccupiedBySecondPlayer[i][j] == false)
-        {
-          pola[i][j] = -1;
+        { 
+          if (compisFirstPlayer == true)
+            pola[i][j] = -1;
+          else
+            pola[i][j] = 1;
           if (wygrana() == true)
           {
             wspx = i;
@@ -70,58 +75,6 @@ bool ObliczWspolrzedneRuchuKomp()
 
       }
     }
-
-  }
-  else
-  {
-    for (int i = 0; i < 3; i++)
-    {
-      for (int j = 0; j < 3; j++)
-      {
-        if (isFieldOccupiedByFirstPlayer[i][j] == false && isFieldOccupiedBySecondPlayer[i][j] == false)
-        {
-          pola[i][j] = -1;
-          if (wygrana() == true)
-          {
-            wspx = i;
-            wspy = j;
-            pola[i][j] = 0;
-            isGameOnn = true;
-            krzyzykWygral = false;
-            return true;
-          }
-          pola[i][j] = 0;
-        }
-
-      }
-    }
-
-    for (int i = 0; i < 3; i++)
-    {
-      for (int j = 0; j < 3; j++)
-      {
-        if (isFieldOccupiedByFirstPlayer[i][j] == false && isFieldOccupiedBySecondPlayer[i][j] == false)
-        {
-          pola[i][j] = 1;
-          if (wygrana() == true)
-          {
-            wspx = i;
-            wspy = j;
-            pola[i][j] = 0;
-            isGameOnn = true;
-            krzyzykWygral = false;
-            return true;
-          }
-          pola[i][j] = 0;
-        }
-
-      }
-    }
-
-  }
-
-
-
 
   return false;
 }
